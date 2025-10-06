@@ -1,4 +1,5 @@
 import numpy as np
+from src.utils.parameters import Parameters
 
 class Linear:
     def __init__(self,input_size, output_size):
@@ -8,30 +9,24 @@ class Linear:
 
         std = np.sqrt(2.0 / self.input_size)
 
-        self.W = np.random.normal(0, std, size=(self.input_size, self.output_size)) #Initialization of the weights
-        self.b = np.zeros((1, self.output_size)) #Initialization of the biases
+        self.W = Parameters(np.random.normal(0, std, size=(self.input_size, self.output_size))) #Initialization of the weights
+        self.b = Parameters(np.zeros((1, self.output_size))) #Initialization of the biases
 
-        self.grad_W = None 
-        self.grad_b = None 
-        
 
     def forward(self,X):
         #Feedforward
         self.X = X
-        return X @ self.W + self.b
+        return X @ self.W.data + self.b.data
     
     def backward(self, error):
         #Backward propagation
         batch_size = error.shape[0]
 
-        self.grad_W = self.X.T @ error / batch_size
-        self.grad_b = np.sum(error, axis=0, keepdims=True) / batch_size
+        self.W.grad = self.X.T @ error / batch_size
+        self.b.grad = np.sum(error, axis=0, keepdims=True) / batch_size
 
-        return error @ self.W.T
+        return error @ self.W.data.T
     
     def parameters(self):
         return [self.W, self.b]
-
-
-
     
