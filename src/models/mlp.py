@@ -2,6 +2,7 @@ import numpy as np
 from src.layers.linear import Linear
 from src.layers.activation import ReLU, Tanh
 
+
 class MLP:
     def __init__(self):
         self.layers=[]
@@ -17,4 +18,7 @@ class MLP:
     def backward(self,err):
         for layer in reversed(self.layers):
             err = layer.backward(err)
+
+    def parameters(self):
+        return self.layers
 
