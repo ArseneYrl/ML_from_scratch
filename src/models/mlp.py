@@ -20,5 +20,9 @@ class MLP:
             err = layer.backward(err)
 
     def parameters(self):
-        return self.layers
+        params = []
+        for layer in self.layers:
+            if hasattr(layer,'parameters'):
+                params.extend(layer.parameters())
+        return params
 
