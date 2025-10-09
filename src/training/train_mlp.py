@@ -4,46 +4,6 @@ from src.utils.accuracy import accuracy
 import time
 import os
 
-
-def train_mlp(model, optimizer, X, y , epochs, batch_size):
-    loss = []
-    m = len(X)
-    y_initial = model.feedforward(X)
-    initial_loss, _ = crossentropy_loss(y_initial,y)
-    loss.append(initial_loss)
-    print("Initial loss:", loss[0])
-    for epoch in range(epochs):
-        epoch_loss = 0
-        num_batches = 0
-        indices = np.random.permutation(m)  # Mini-Batch SGD
-        
-        X_shuffled = X[indices]
-        y_shuffled = y[indices]
-
-        for i in range(0, m, batch_size):
-            X_batch = X_shuffled[i:i + batch_size]
-            y_batch = y_shuffled[i:i + batch_size]
-
-            y_new = model.feedforward(X_batch)
-
-            batch_loss, err = crossentropy_loss(y_new,y_batch)
-            epoch_loss += batch_loss
-            num_batches += 1
-
-            model.backward(err)
-
-            optimizer.step()
-            optimizer.zero_grad() 
-
-        avg_loss = epoch_loss / num_batches
-        loss.append(avg_loss)
-        if epoch % 10 == 0:
-            print(f"Epoch {epoch}, Loss: {avg_loss}")
-
-
-    return loss
-
-
 class Trainer:
     def __init__(self, model, optimizer, seed = 42):
         self.model = model
@@ -77,6 +37,7 @@ class Trainer:
         self.setup_seed()
         m = len(X_train)
         history = {'train_loss': [], 'train_acc': [], 'val_loss': [], 'val_acc': []}
+        start_time = time.time()
         for epoch in range(epochs):
 
             self.train_epoch(X_train, y_train, batch_size, m)
@@ -100,6 +61,8 @@ class Trainer:
 
                 history['val_loss'].append(val_loss)
                 history['val_acc'].append(val_acc)
+        total_time = time.time() - start_time
+        print("Time:",total_time)
 
         return history
 
