@@ -4,12 +4,15 @@ from src.utils.crossentropy_loss import crossentropy_loss
 def train_mlp(model, optimizer, X, y , epochs, batch_size):
     loss = []
     m = len(X)
-
+    y_initial = model.feedforward(X)
+    initial_loss, _ = crossentropy_loss(y_initial,y)
+    loss.append(initial_loss)
+    print("Initial loss:", loss[0])
     for epoch in range(epochs):
         epoch_loss = 0
         num_batches = 0
         indices = np.random.permutation(m)  # Mini-Batch SGD
-
+        
         X_shuffled = X[indices]
         y_shuffled = y[indices]
 
@@ -22,6 +25,7 @@ def train_mlp(model, optimizer, X, y , epochs, batch_size):
             batch_loss, err = crossentropy_loss(y_new,y_batch)
             epoch_loss += batch_loss
             num_batches += 1
+
             model.backward(err)
 
             optimizer.step()
