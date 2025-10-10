@@ -5,13 +5,15 @@ import time
 import os
 
 class Trainer:
-    def __init__(self, seed = 42):
+    def __init__(self, model, optimizer, seed = 42):
         self.seed = seed
+        self.model = model
+        self.optimizer = optimizer
     
     def setup_seed(self):
         np.random.seed(self.seed)
 
-    def train_epoch(self, model, optimizer, X, y, batch_size, m):
+    def train_epoch(self, X, y, batch_size, m):
 
         indices = np.random.permutation(m)  # Mini-Batch SGD
         
@@ -22,24 +24,24 @@ class Trainer:
             X_batch = X_shuffled[i:i + batch_size]
             y_batch = y_shuffled[i:i + batch_size]
 
-            y_pred = model.feedforward(X_batch)
+            y_pred = self.model.feedforward(X_batch)
             
 
             _, err = crossentropy_loss(y_pred, y_batch)
 
-            model.backward(err)
+            self.model.backward(err)
 
-            optimizer.step()
-            optimizer.zero_grad() 
+            self.optimizer.step()
+            self.optimizer.zero_grad() 
 
-    def train(self, model, optimizer, X_train, y_train, X_val = None, y_val = None, epochs=50, batch_size=32):
-        #self.setup_seed()
+    def train(self, X_train, y_train, X_val = None, y_val = None, epochs=50, batch_size=32):
+        self.setup_seed()
         m = len(X_train)
         history = {'train_loss': [], 'train_acc': [], 'val_loss': [], 'val_acc': []}
         start_time = time.time()
         for epoch in range(epochs):
 
-            y_pred_train = model.feedforward(X_train)
+            y_pred_train = self.model.feedforward(X_train)
 
             train_acc = accuracy(y_train, y_pred_train)
             train_loss, _ = crossentropy_loss(y_pred_train, y_train)
@@ -51,15 +53,18 @@ class Trainer:
                 print(f"Epoch {epoch}, Train Loss: {train_loss}, Train Accuracy:{train_acc}")
 
             if X_val is not None and y_val is not None:
-                y_pred_val = model.feedforward(X_val)
+                y_pred_val = self.model.feedforward(X_val)
 
                 val_acc = accuracy(y_val, y_pred_val)
                 val_loss, _ = crossentropy_loss(y_pred_val, y_val)
 
                 history['val_loss'].append(val_loss)
                 history['val_acc'].append(val_acc)
+                if epoch % 10 == 0:
+                    print(f"Validation Loss: {val_loss}, Validation Accuracy:{val_acc}")
 
-            self.train_epoch(model, optimizer, X_train, y_train, batch_size, m)
+
+            self.train_epoch(X_train, y_train, batch_size, m)
 
  
         total_time = time.time() - start_time
@@ -67,9 +72,15 @@ class Trainer:
 
         return history
     
+    def fit(self, X_test, y_test):
+        y_pred = self.model.feedforward(X_test)
+        return accuracy(y_test, y_pred) 
+        
 
 
-def train_mlp(model, optimizer, X, y , epochs, batch_size):
+    
+
+'''def train_mlp(model, optimizer, X, y , epochs, batch_size):
     loss = []
     m = len(X)
     y_initial = model.feedforward(X)
@@ -104,5 +115,6 @@ def train_mlp(model, optimizer, X, y , epochs, batch_size):
         if epoch % 10 == 0:
             print(f"Epoch {epoch}, Loss: {avg_loss}")
 
-    return loss
+    return loss'''
+
 
