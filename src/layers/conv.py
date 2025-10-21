@@ -1,6 +1,6 @@
 import numpy as np
 from src.utils.parameters import Parameters
-
+from src.utils.center import center
 class Conv:
     def __init__(self, D, H, W, K, F = 3, S = 1, P=0):
         self.D = D #Depth of the layer
@@ -13,21 +13,9 @@ class Conv:
         self.filters = Parameters(np.random.randn(self.K, self.D, self.F, self.F)) #Initialization of the filters
         self.b = Parameters(np.random.randn(self.K))
 
-    def center(self, Input):
-        #Input will be of shape (W, H, D)
-        centers = []
-        rad = self.F // 2
-        for i in range(rad,Input.shape[1]-rad,self.S):
-
-            for j in range(rad,Input.shape[2]-rad,self.S):
-
-                C=Input[:, i-rad:i+rad+1, j-rad:j+rad+1]
-                centers.append(C)
-        return centers
-    
 
     def forward(self,inputs):
-        centers = self.center(self.zero_padding(inputs))
+        centers = center(self.zero_padding(inputs),self.F, self.S)
         H1 = int((self.H+2*self.P-self.F)/self.S +1)
         W1 = int((self.W+2*self.P-self.F)/self.S +1)
         D1 = self.K
@@ -47,5 +35,5 @@ class Conv:
         if self.P == 0:
             return input
         padding = np.zeros([self.D,self.H+2*self.P, self.W+2*self.P])
-        padding[::,self.P:self.H+1, self.P:self.W+1]=input
+        padding[:, self.P:self.P+self.H, self.P:self.P+self.W] = input
         return padding
