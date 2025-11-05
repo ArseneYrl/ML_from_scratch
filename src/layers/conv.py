@@ -1,11 +1,9 @@
 import numpy as np
 from src.utils.parameters import Parameters
-from src.utils.center import center
+from src.utils.patches import Patches
 class Conv:
-    def __init__(self, D, H, W, K, F = 3, S = 1, P=0):
+    def __init__(self, D, K, F = 3, S = 1, P=0):
         self.D = D #Depth of the layer
-        self.H = H #Height of the layer
-        self.W = W #Widith of the layer
         self.F = F #Size of the filters "Spatial extent"
         self.S = S #Stride
         self.K = K #Number of filters
@@ -15,7 +13,10 @@ class Conv:
 
 
     def forward(self,inputs):
-        centers = center(self.zero_padding(inputs),self.F, self.S)
+        self.H=inputs.shape[1]
+        self.W=inputs.shape[2]
+        patch = Patches(self.F, self.S)
+        centers= patch.separate(self.zero_padding(inputs))
         H1 = int((self.H+2*self.P-self.F)/self.S +1)
         W1 = int((self.W+2*self.P-self.F)/self.S +1)
         D1 = self.K
@@ -37,3 +38,11 @@ class Conv:
         padding = np.zeros([self.D,self.H+2*self.P, self.W+2*self.P])
         padding[:, self.P:self.P+self.H, self.P:self.P+self.W] = input
         return padding
+    
+
+    def backward(self):
+
+        pass
+
+    def parameters(self):
+        return[self.filters,self.b]
