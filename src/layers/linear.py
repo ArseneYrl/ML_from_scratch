@@ -2,6 +2,7 @@ import numpy as np
 from src.utils.parameters import Parameters
 
 class Linear:
+    #Fully connected layer
     def __init__(self,input_size, output_size):
 
         self.input_size = input_size
@@ -14,7 +15,7 @@ class Linear:
 
 
     def forward(self,X):
-        #Feedforward
+        #Feedforward through the layer
         self.X = X
         return X @ self.W.data + self.b.data
     
@@ -28,5 +29,6 @@ class Linear:
         return error @ self.W.data.T
     
     def parameters(self):
+        #Parameters
         return [self.W, self.b]
     

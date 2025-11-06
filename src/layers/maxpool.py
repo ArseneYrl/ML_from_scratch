@@ -1,8 +1,10 @@
 import numpy as np
 from src.utils.parameters import Parameters
-from src.utils.center import Patches
+from src.utils.patches import Patches
 
 class MaxPool:
+    '''WIP: Clean and optimize the code'''
+    #Maxpool layer for the CNN architecture
     def __init__(self, F=3, S=1):
         self.F = F
         self.S = S
@@ -11,6 +13,7 @@ class MaxPool:
         self.patches = Patches(self.F, self.S)
         self.centers=self.patches.separate(X)
         self.D,self.H,self.W = X.shape
+        
         D1=self.D
         H1=(self.H-self.F)//self.S+1
         W1=(self.W-self.F)//self.S+1

@@ -1,6 +1,7 @@
 import numpy as np
 
 def crossentropy_loss(ynew, ytrue):
+    #Compute the crossentropy loss and its gradient
     exp = np.exp(ynew - np.max(ynew, axis=1, keepdims=True))
     softmax = exp / np.sum(exp, axis = 1, keepdims=True)
 

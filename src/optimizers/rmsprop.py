@@ -2,6 +2,7 @@ import numpy as np
 from .base import Optimizer
 
 class RMSprop(Optimizer):
+    #RMSprop optimizer
     def __init__(self, parameters, lr, gamma):
         super().__init__(parameters, lr)
         self.gamma=gamma

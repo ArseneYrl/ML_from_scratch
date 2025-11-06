@@ -8,6 +8,7 @@ class Dropout:
 
     def forward(self, X):
         self.p = np.random.binomial(1,1-self.rate, size = X.shape)
+        #Delete the neurons according to p
         return X*self.p
     
     def backward(self, error):

@@ -2,6 +2,7 @@ import numpy as np
 from src.utils.parameters import Parameters
 from src.utils.patches import Patches
 class Conv:
+    '''WIP'''
     def __init__(self, D, K, F = 3, S = 1, P=0):
         self.D = D #Depth of the layer
         self.F = F #Size of the filters "Spatial extent"
@@ -43,6 +44,7 @@ class Conv:
     def backward(self):
 
         pass
+    #Work in progress
 
     def parameters(self):
         return[self.filters,self.b]

@@ -18,17 +18,17 @@ class Tanh: #tanh activation
         dTanh = 1 - np.tanh(self.z)**2
         return error * dTanh
     
-class Sigmoid:
+class Sigmoid: #Sigmoid activaion
     def forward(self, z):
         self.z = z
         return 1/(1-np.exp(-z))
     
     def backward(self, error):
-        exp = np.exp(-self.z)
+        exp = np.exp(-self.z- np.max(error, axis=1, keepdims=True))
         dSig = -exp/((1-exp)**2)
         return error * dSig
     
-class Leaky_ReLU:
+class Leaky_ReLU: #Leaky_ReLU activation
     def forward(self, z):
         self.z = z
         self.cond = (self.z > 0)
@@ -38,11 +38,11 @@ class Leaky_ReLU:
         dLRLU = np.where(self.cond,0.1,1)
         return error * dLRLU
     
-class ELU:
+class ELU: #ELU activation
     def forward(self, z):
         self.z = z
         self.cond = (self.z > 0)
-        self.exp = np.exp(self.z)
+        self.exp = np.exp(self.z-np.max(z, axis=1, keepdims=True))
         return np.where(self.cond, self.exp-1, self.z)
     
     def backward(self, error):
